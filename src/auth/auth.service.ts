@@ -30,13 +30,13 @@ export class AuthService {
         return this.signIn(signInData);
     }
 
-    // Validates a username and password input (with bcrypt validation) combination with the database
+    // Validates a username and password input (with bcrypt validation) with the database
     async validateUser(input : UserLoginAttempt) : Promise<SignInData | null> {
         const user = await this.userService.findUserByUsername(input.username);
 
         if(user && await bcrypt.compare(input.password, user.password)) {
             return {
-                userId: user.id,
+                userId: user.user_infoId,
                 username: user.username
             }
         }
