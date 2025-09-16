@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { Prisma, User_credentials } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -31,6 +31,8 @@ export class UserService {
         password = await bcrypt.hash(password, this.saltRounds);
         console.log(password);
         
+        if(!password) throw new InternalServerErrorException('Problem with password hashing');
+        userCreateDto.user_credentials!.create!.password = password;
         return await this.databaseService.user_info.create({
             data: userCreateDto,
         })
@@ -48,11 +50,15 @@ export class UserService {
 
     // Delete an user
     async deleteUser(user_id: number) {
-        return await this.databaseService.user_info.delete({
-            where: {
-                user_id,
-            }
-        });
+        try{
+            return await this.databaseService.user_info.delete({
+                where: {
+                    user_id,
+                }
+            });
+        } catch (error) {
+            throw new BadRequestException('User not found');
+        }
     }
 
     // Find user by username

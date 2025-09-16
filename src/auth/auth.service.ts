@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { UserLoginAttempt } from "src/auth/auth.controller";
 import { UserService } from "../user/user.service";
 import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from 'bcrypt';
 
 
 type SignInData = {
@@ -29,11 +30,11 @@ export class AuthService {
         return this.signIn(signInData);
     }
 
-    // Validates a username and password input combination with the database
+    // Validates a username and password input (with bcrypt validation) combination with the database
     async validateUser(input : UserLoginAttempt) : Promise<SignInData | null> {
         const user = await this.userService.findUserByUsername(input.username);
 
-        if(user && user.password === input.password) {
+        if(user && await bcrypt.compare(input.password, user.password)) {
             return {
                 userId: user.id,
                 username: user.username
