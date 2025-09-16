@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User_info {
-  user_id Int @id
+  user_id Int @id @default(autoincrement())
   first_name String
   last_name String
   age Int
@@ -22,10 +22,14 @@ model User_info {
   birth_date  DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user_credentials User_credentials?
 }
 
 model User_credentials {
-  user_id Int @id
+  id Int @id @default(autoincrement())
   email String
-  password_ String
+  username String @unique
+  password String
+  user_info User_info @relation(fields: [user_infoId], references: [user_id], onDelete: Cascade)
+  user_infoId Int @unique
 }
