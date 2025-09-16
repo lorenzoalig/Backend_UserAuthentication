@@ -1,0 +1,66 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DatabaseService } from '../database/database.service';
+import { Prisma, User_credentials } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+
+
+@Injectable()
+export class UserService {
+    saltRounds : number = 12;
+
+    constructor(private readonly databaseService : DatabaseService) {}
+
+    // Get all users
+    async getUsers() {
+        return await this.databaseService.user_info.findMany({});
+    }
+
+    // Get a single user
+    async getUser(user_id: number) {
+        return await this.databaseService.user_info.findUnique ({
+            where: {
+                user_id
+            }
+        })
+    }
+
+    // Create a user
+    async createUser(userCreateDto : Prisma.User_infoCreateInput) {
+        let password = userCreateDto.user_credentials?.create?.password;
+        console.log(password);
+        password = await bcrypt.hash(password, this.saltRounds);
+        console.log(password);
+        
+        return await this.databaseService.user_info.create({
+            data: userCreateDto,
+        })
+    }
+
+    // Update an user
+    async updateUser(user_id: number, userUpdateDto: Prisma.User_infoUpdateInput) {
+        return await this.databaseService.user_info.update({
+            where: {
+                user_id,
+            },
+            data: userUpdateDto
+        });
+    }
+
+    // Delete an user
+    async deleteUser(user_id: number) {
+        return await this.databaseService.user_info.delete({
+            where: {
+                user_id,
+            }
+        });
+    }
+
+    // Find user by username
+    async findUserByUsername(username: string) : Promise<User_credentials | null>{
+        return await this.databaseService.user_credentials.findUnique({
+            where: {
+                username
+            }
+        });
+    }
+}
