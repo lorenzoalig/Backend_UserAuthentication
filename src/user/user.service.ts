@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
-import { Prisma, User_credentials } from '@prisma/client';
+import { Prisma, User_credentials, User_info } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 
@@ -15,26 +15,25 @@ export class UserService {
         return await this.databaseService.user_info.findMany({});
     }
 
-    // Get a single user
-    async getUser(user_id: number) {
-        return await this.databaseService.user_info.findUnique ({
+    // Get a single user by their ID
+    async findUserById(user_id: number) : Promise<User_info | null>{
+        return await this.databaseService.user_info.findUnique({
             where: {
                 user_id
             }
-        })
+        });
     }
 
     // Create a user
-    async createUser(userCreateDto : Prisma.User_infoCreateInput) {
-        let password = userCreateDto.user_credentials?.create?.password;
-        console.log(password);
+    async createUser(prismaInput: Prisma.User_infoCreateInput) {
+        let password = prismaInput.user_credentials?.create?.password
         password = await bcrypt.hash(password, this.saltRounds);
-        console.log(password);
         
         if(!password) throw new InternalServerErrorException('Problem with password hashing');
-        userCreateDto.user_credentials!.create!.password = password;
+        prismaInput.user_credentials!.create!.password = password;
         return await this.databaseService.user_info.create({
-            data: userCreateDto,
+            data: prismaInput,
+            include: { user_credentials: true}
         })
     }
 
@@ -50,6 +49,9 @@ export class UserService {
 
     // Delete an user
     async deleteUser(user_id: number) {
+        const user = await this.findUserById(user_id);
+        
+        if(!user) throw new NotFoundException("User not found");
         try{
             return await this.databaseService.user_info.delete({
                 where: {
@@ -60,7 +62,7 @@ export class UserService {
             throw new BadRequestException('User not found');
         }
     }
-
+    
     // Find user by username
     async findUserByUsername(username: string) : Promise<User_credentials | null>{
         return await this.databaseService.user_credentials.findUnique({
@@ -68,5 +70,15 @@ export class UserService {
                 username
             }
         });
+    }
+
+    // Find user by email
+    async findUserByEmail(email: string) : Promise<User_credentials | null> {
+        const user = await this.databaseService.user_credentials.findFirst({    // FIXME: migrate new prisma schema with email as unique
+            where: {
+                email
+            }
+        });
+        return user;
     }
 }
