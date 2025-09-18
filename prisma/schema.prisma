@@ -13,13 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Gender {
+  Male
+  Female
+  Other
+}
+
 model User_info {
   user_id Int @id @default(autoincrement())
   first_name String
   last_name String
   age Int
-  gender String
-  birth_date  DateTime
+  gender Gender
+  birth_date DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user_credentials User_credentials?
@@ -32,4 +38,20 @@ model User_credentials {
   password String
   user_info User_info @relation(fields: [user_infoId], references: [user_id], onDelete: Cascade)
   user_infoId Int @unique
+}
+
+model Deleted_users {
+  deleted_user_id Int @id @default(autoincrement())
+  user_id Int
+  first_name String
+  last_name String
+  age Int
+  gender Gender
+  birth_date  DateTime
+  createdAt DateTime
+  updatedAt DateTime
+  email String @unique
+  username String @unique
+  password String
+  deletedAt DateTime @default(now())
 }

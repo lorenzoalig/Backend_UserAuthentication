@@ -1,5 +1,6 @@
+import { Gender } from "@prisma/client";
 import { Type } from "class-transformer";
-import { IsDate, IsEmail, IsIn, IsInt, IsNotEmpty, IsString, IsStrongPassword, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
+import { IsDate, IsEmail, IsEnum, IsIn, IsInt, IsNotEmpty, IsString, IsStrongPassword, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
 
 
 export class CreateUserCredentialsDto { 
@@ -54,8 +55,8 @@ export class CreateUserDto {
 
     @IsString()
     @IsNotEmpty()
-    @IsIn(['Male', 'Female', 'Other'])
-    gender: string;
+    @IsEnum(Gender)
+    gender: Gender;
 
     @IsDate()
     @IsNotEmpty()

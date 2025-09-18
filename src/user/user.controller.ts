@@ -19,7 +19,7 @@ export class UserController {
     // Get a single user
     @Get(':id')
     getUser(@Param('id') id: string) {
-        return this.userService.getUser(+id);
+        return this.userService.findUserById(+id);
     }
 
     // Create an user
