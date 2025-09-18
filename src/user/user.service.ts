@@ -1,8 +1,7 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { Prisma, User_credentials } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from './dto/create-user-dto';
 
 
 @Injectable()
@@ -26,31 +25,15 @@ export class UserService {
     }
 
     // Create a user
-    async createUser(dto : CreateUserDto) {
-        const prismaInput: Prisma.User_infoCreateInput = {
-            first_name: dto.first_name,
-            last_name: dto.last_name,
-            age: dto.age,
-            gender: dto.gender,
-            birth_date: dto.birth_date,
-            user_credentials: {
-                create: {
-                    username: dto.user_credential.create.username,
-                    email: dto.user_credential.create.email,
-                    password: dto.user_credential.create.password,
-                }
-            }
-        };
-        
-        let password = prismaInput.user_credentials?.create?.password;
-        console.log(password);
+    async createUser(prismaInput: Prisma.User_infoCreateInput) {
+        let password = prismaInput.user_credentials?.create?.password
         password = await bcrypt.hash(password, this.saltRounds);
-        console.log(password);
         
         if(!password) throw new InternalServerErrorException('Problem with password hashing');
         prismaInput.user_credentials!.create!.password = password;
         return await this.databaseService.user_info.create({
             data: prismaInput,
+            include: { user_credentials: true}
         })
     }
 
@@ -84,5 +67,15 @@ export class UserService {
                 username
             }
         });
+    }
+
+    // Find user by email
+    async findUserByEmail(email: string) : Promise<User_credentials | null> {
+        const user = await this.databaseService.user_credentials.findFirst({    // FIXME: migrate new prisma schema with email as unique
+            where: {
+                email
+            }
+        });
+        return user;
     }
 }

@@ -1,8 +1,8 @@
 import { Type } from "class-transformer";
-import { IsDate, IsEmail, IsIn, IsInt, IsNotEmpty, IsNotEmptyObject, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
+import { IsDate, IsEmail, IsIn, IsInt, IsNotEmpty, IsString, IsStrongPassword, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
 
 
-export class CreateUserCredentialDto { 
+export class CreateUserCredentialsDto { 
     @IsString()
     @IsNotEmpty()
     @MinLength(5)
@@ -15,15 +15,21 @@ export class CreateUserCredentialDto {
      
     @IsString()
     @IsNotEmpty()
-    @MinLength(8)
-    @MaxLength(20)
+    @IsStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1
+    })
     password: string;
 }
 
-export class CreateUserCredentialWrapperDto {
+export class CreateUserCredentialsWrapperDto {
     @ValidateNested()
-    @Type(() => CreateUserCredentialDto)    
-    create: CreateUserCredentialDto
+    @IsNotEmpty()
+    @Type(() => CreateUserCredentialsDto)
+    create: CreateUserCredentialsDto
 }
 
 export class CreateUserDto {
@@ -58,6 +64,6 @@ export class CreateUserDto {
 
     @ValidateNested()
     @IsNotEmpty()
-    @Type(() => CreateUserCredentialWrapperDto)
-    user_credential: CreateUserCredentialWrapperDto;
+    @Type(() => CreateUserCredentialsWrapperDto)
+    user_credentials: CreateUserCredentialsWrapperDto;
 }

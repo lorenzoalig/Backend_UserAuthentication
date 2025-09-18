@@ -1,7 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, ValidationPipe } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user-dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { mapUserDtoToPrisma, mapUserEntityToUserResponseDto } from './mapper/user.mapper';
+import { map } from 'rxjs';
 
 
 @Controller('users')
@@ -22,16 +24,17 @@ export class UserController {
 
     // Create an user
     @Post()
-    createUser(
+    async createUser(
         @Body(new ValidationPipe({
             whitelist: true,
             transform: true,
             forbidNonWhitelisted:true
         })) 
-        createDto : CreateUserDto) {
-        
-        // Prisma.User_infoCreateInput
-        return this.userService.createUser(createDto);
+        createDto : CreateUserDto
+    ) {
+        const prismaInput = mapUserDtoToPrisma(createDto);
+        const user = await this.userService.createUser(prismaInput);
+        return mapUserEntityToUserResponseDto(user);
     }
 
     // Update an user

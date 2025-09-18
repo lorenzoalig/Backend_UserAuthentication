@@ -27,7 +27,7 @@ model User_info {
 
 model User_credentials {
   credentials_id Int @id @default(autoincrement())
-  email String
+  email String @unique
   username String @unique
   password String
   user_info User_info @relation(fields: [user_infoId], references: [user_id], onDelete: Cascade)
