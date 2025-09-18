@@ -63,6 +63,11 @@ export class CreateUserDto {
     @Type(() => Date)
     birth_date: Date;
 
+    @IsInt()
+    @IsNotEmpty()
+    @Type(() => Number)
+    rank: number;
+
     @ValidateNested()
     @IsNotEmpty()
     @Type(() => CreateUserCredentialsWrapperDto)

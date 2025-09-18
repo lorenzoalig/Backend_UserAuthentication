@@ -8,7 +8,10 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
     saltRounds : number = 12;
 
-    constructor(private readonly databaseService : DatabaseService) {}
+    constructor(
+        private readonly databaseService : DatabaseService
+        //PRIVATE READONLY mapperSerivce : MapperService
+    ) {}
 
     // Get all users
     async getUsers() {
@@ -67,7 +70,7 @@ export class UserService {
     async findUserByUsername(username: string) : Promise<User_credentials | null>{
         return await this.databaseService.user_credentials.findUnique({
             where: {
-                username
+                username,
             }
         });
     }

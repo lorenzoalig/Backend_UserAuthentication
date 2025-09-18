@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Request, UseGuards, ValidationPipe } from 
 import { AuthService } from "src/auth/auth.service";
 import { AuthGuard } from "./guards/auth.guard";
 import { UserLoginDto } from "./dto/user-login.dto";
+import { RankGuard } from "./guards/rank.guard";
 
 
 @Controller('auth')

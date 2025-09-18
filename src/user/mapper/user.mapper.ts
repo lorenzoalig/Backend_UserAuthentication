@@ -9,6 +9,7 @@ export function mapUserDtoToPrisma(dto: CreateUserDto) : Prisma.User_infoCreateI
         age: dto.age,
         gender: dto.gender,
         birth_date: dto.birth_date,
+        rank: dto.rank,
         user_credentials: {
             create: {
                 username: dto.user_credentials.create.username,

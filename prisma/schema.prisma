@@ -26,8 +26,10 @@ model User_info {
   age Int
   gender Gender
   birth_date DateTime
+  rank Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  // deletedAt DateTime @default(now()) // FIXME: Adicionar deletado
   user_credentials User_credentials?
 }
 
