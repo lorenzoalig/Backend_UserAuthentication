@@ -71,5 +71,5 @@ export class CreateUserDto {
     @ValidateNested()
     @IsNotEmpty()
     @Type(() => CreateUserCredentialsWrapperDto)
-    user_credentials: CreateUserCredentialsWrapperDto;
+    credentials: CreateUserCredentialsWrapperDto;
 }

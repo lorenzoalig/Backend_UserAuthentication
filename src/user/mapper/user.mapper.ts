@@ -12,10 +12,10 @@ export function mapUserDtoToPrisma(dto: CreateUserDto) : Prisma.UserCreateInput 
         birth_date: dto.birth_date,
         credentials: {
             create: {
-                username: dto.user_credentials.create.username,
-                email: dto.user_credentials.create.email,
-                password: dto.user_credentials.create.password,
-                rank: dto.user_credentials.create.rank
+                username: dto.credentials.create.username,
+                email: dto.credentials.create.email,
+                password: dto.credentials.create.password,
+                rank: dto.credentials.create.rank
             }
         }
     };
