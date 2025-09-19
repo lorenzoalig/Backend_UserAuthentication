@@ -22,13 +22,11 @@ export function mapUserDtoToPrisma(dto: CreateUserDto) : Prisma.UserCreateInput 
     return prismaInput;
 }
 
-export function mapUserEntityToUserResponseDto (
-    user: User & { credentials: { email: string; username: string; password: string; rank: number, credentialsId: number; userId: number } | null }
-) : UserResponseDto{
+export function mapUserEntityToUserResponseDto (user: User & { credentials } ) : UserResponseDto {
     if (!user.credentials) {
         throw new InternalServerErrorException("User credentials missing");
     }
-    const userResponse = {
+    const userResponse : UserResponseDto = {
         userId: user.userId,
         first_name: user.first_name,
         last_name: user.last_name,

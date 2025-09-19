@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Res, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { mapUserDtoToPrisma, mapUserEntityToUserResponseDto } from './mapper/user.mapper';
-import { PdfService } from '../report/report.service';
-import type { Response } from 'express';
+import { PdfService } from './report.service';
+import type { Request, Response } from 'express';
 import { RankGuard } from './guards/rank.guard';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 
@@ -25,9 +25,8 @@ export class UserController {
     // Get user report
     @Get('report')
     @UseGuards(AuthGuard, RankGuard)
-    printPdf(@Res() res: Response) {
-        const doc = this.pdfService.generateReport();
-
+    async getReport(@Req() req : Request, @Res() res: Response) {
+        const doc = await this.pdfService.createReport(req);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-disposition', 'inline; filename=relatorio.pdf');
 

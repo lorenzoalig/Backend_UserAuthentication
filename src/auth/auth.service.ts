@@ -26,7 +26,7 @@ export class AuthService {
     async authenticate(input : UserLoginDto) : Promise<AuthOutput>{
         const signInData = await this.validateUser(input);
 
-        if(!signInData) throw new NotFoundException('Email or password incorrect');
+        if(!signInData) throw new UnauthorizedException('Email or password incorrect');
         return this.signIn(signInData);
     }
 

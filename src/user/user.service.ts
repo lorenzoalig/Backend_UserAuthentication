@@ -19,11 +19,12 @@ export class UserService {
     }
 
     // Get a single user by their ID
-    async findUserById(userId: number) : Promise<User | null>{
+    async findUserById(userId: number) {
         return await this.databaseService.user.findUnique({
             where: {
                 userId
-            }
+            },
+            include : { credentials: true }
         });
     }
 
