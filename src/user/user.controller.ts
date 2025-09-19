@@ -58,7 +58,7 @@ export class UserController {
 
     // Update an user
     @Patch(':id')
-    updateUser(@Param('id') id : string, @Body() body : Prisma.User_infoUpdateInput) {
+    updateUser(@Param('id') id: string, @Body() body: Prisma.UserUpdateInput) {  // FIXME: Add UserUpdateDto and mapper to Prisma.UserUpdateInput and vice-versa
         return this.userService.updateUser(+id, body);
     }
 

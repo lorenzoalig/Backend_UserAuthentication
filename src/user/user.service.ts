@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
-import { Prisma, User_credentials, User_info } from '@prisma/client';
+import { Credentials, Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 
@@ -15,50 +15,50 @@ export class UserService {
 
     // Get all users
     async getUsers() {
-        return await this.databaseService.user_info.findMany({});
+        return await this.databaseService.user.findMany({});
     }
 
     // Get a single user by their ID
-    async findUserById(user_id: number) : Promise<User_info | null>{
-        return await this.databaseService.user_info.findUnique({
+    async findUserById(userId: number) : Promise<User | null>{
+        return await this.databaseService.user.findUnique({
             where: {
-                user_id
+                userId
             }
         });
     }
 
     // Create a user
-    async createUser(prismaInput: Prisma.User_infoCreateInput) {
-        let password = prismaInput.user_credentials?.create?.password
+    async createUser(prismaInput: Prisma.UserCreateInput) {
+        let password = prismaInput.credentials?.create?.password
         password = await bcrypt.hash(password, this.saltRounds);
         
         if(!password) throw new InternalServerErrorException('Problem with password hashing');
-        prismaInput.user_credentials!.create!.password = password;
-        return await this.databaseService.user_info.create({
+        prismaInput.credentials!.create!.password = password;
+        return await this.databaseService.user.create({
             data: prismaInput,
-            include: { user_credentials: true }
+            include: { credentials: true }
         })
     }
 
     // Update an user
-    async updateUser(user_id: number, userUpdateDto: Prisma.User_infoUpdateInput) {
-        return await this.databaseService.user_info.update({
+    async updateUser(userId: number, userUpdateDto: Prisma.UserUpdateInput) {
+        return await this.databaseService.user.update({
             where: {
-                user_id,
+                userId
             },
             data: userUpdateDto
         });
     }
 
     // Delete an user
-    async deleteUser(user_id: number) {
-        const user = await this.findUserById(user_id);
+    async deleteUser(userId: number) {
+        const user = await this.findUserById(userId);
         
         if(!user) throw new NotFoundException("User not found");
         try{
-            return await this.databaseService.user_info.delete({
+            return await this.databaseService.user.delete({
                 where: {
-                    user_id,
+                    userId,
                 }
             });
         } catch (error) {
@@ -67,8 +67,8 @@ export class UserService {
     }
     
     // Find user by username
-    async findUserByUsername(username: string) : Promise<User_credentials | null>{
-        return await this.databaseService.user_credentials.findUnique({
+    async findUserByUsername(username: string) : Promise<Credentials | null>{
+        return await this.databaseService.credentials.findUnique({
             where: {
                 username
             }
@@ -76,8 +76,8 @@ export class UserService {
     }
 
     // Find user by email
-    async findUserByEmail(email: string) : Promise<User_credentials | null> {
-        const user = await this.databaseService.user_credentials.findFirst({    // FIXME: migrate new prisma schema with email as unique
+    async findUserByEmail(email: string) : Promise<Credentials | null> {
+        const user = await this.databaseService.credentials.findFirst({
             where: {
                 email
             }

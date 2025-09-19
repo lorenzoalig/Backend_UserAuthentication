@@ -19,8 +19,8 @@ enum Gender {
   Other
 }
 
-model User_info {
-  user_id Int @id @default(autoincrement())
+model User {
+  userId Int @id @default(autoincrement())
   first_name String
   last_name String
   age Int
@@ -28,32 +28,16 @@ model User_info {
   birth_date DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  // deletedAt DateTime @default(now()) // FIXME: Adicionar deletado
-  user_credentials User_credentials?
+  deletedAt DateTime?
+  credentials Credentials?
 }
 
-model User_credentials {
-  credentials_id Int @id @default(autoincrement())
+model Credentials {
+  credentialsId Int @id @default(autoincrement())
   email String @unique
   username String @unique
   password String
   rank Int @default(1)
-  user_info User_info @relation(fields: [user_infoId], references: [user_id], onDelete: Cascade)
-  user_infoId Int @unique
-}
-
-model Deleted_users {
-  deleted_user_id Int @id @default(autoincrement())
-  user_id Int
-  first_name String
-  last_name String
-  age Int
-  gender Gender
-  birth_date  DateTime
-  createdAt DateTime
-  updatedAt DateTime
-  email String @unique
-  username String @unique
-  password String
-  deletedAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  userId Int @unique
 }
