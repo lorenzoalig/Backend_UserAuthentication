@@ -5,6 +5,7 @@ export class UserResponseDto {
     age: number;
     gender: string;
     birth_date: Date;
+    rank: number;
     username: string;
     email: string;
 }

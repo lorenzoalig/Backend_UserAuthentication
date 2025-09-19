@@ -8,7 +8,10 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
     saltRounds : number = 12;
 
-    constructor(private readonly databaseService : DatabaseService) {}
+    constructor(
+        private readonly databaseService : DatabaseService
+        //PRIVATE READONLY mapperSerivce : MapperService
+    ) {}
 
     // Get all users
     async getUsers() {
@@ -33,7 +36,7 @@ export class UserService {
         prismaInput.user_credentials!.create!.password = password;
         return await this.databaseService.user_info.create({
             data: prismaInput,
-            include: { user_credentials: true}
+            include: { user_credentials: true }
         })
     }
 

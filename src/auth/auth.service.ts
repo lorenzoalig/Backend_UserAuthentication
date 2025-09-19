@@ -5,14 +5,14 @@ import * as bcrypt from 'bcrypt';
 import { UserLoginDto } from "./dto/user-login.dto";
 
 
-type UserSignInData = {
+type SignInData = {
     userId: number,
-    email: string
+    username: string
 }
 type AuthOutput = {
     accessToken: string,
     userId: number,
-    email: string
+    username: string
 }
 
 @Injectable()
@@ -31,25 +31,25 @@ export class AuthService {
     }
 
     // Validates a username and password input (with bcrypt validation) with the database
-    async validateUser(input : UserLoginDto) : Promise<UserSignInData | null> {
+    async validateUser(input : UserLoginDto) : Promise<SignInData | null> {
         const user = await this.userService.findUserByEmail(input.email);
 
         if(user && await bcrypt.compare(input.password, user.password)) {
             return {
                 userId: user.user_infoId,
-                email: user.email
+                username: user.username
             }
         }
         return null;
     }
 
     // Signs the JWT payload with the user's validated sign-in data
-    async signIn(signInData : UserSignInData) : Promise<AuthOutput> {
+    async signIn(signInData : SignInData) : Promise<AuthOutput> {
         const tokenPayLoad = {
             sub: signInData.userId,
-            username: signInData.email
+            username: signInData.username
         }
         const accessToken = await this.jwtService.signAsync(tokenPayLoad);
-        return {accessToken, userId: signInData.userId ,email: signInData.email};
+        return {accessToken, userId: signInData.userId ,username: signInData.username};
     }
 }

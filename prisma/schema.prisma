@@ -28,6 +28,7 @@ model User_info {
   birth_date DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  // deletedAt DateTime @default(now()) // FIXME: Adicionar deletado
   user_credentials User_credentials?
 }
 
@@ -36,6 +37,7 @@ model User_credentials {
   email String @unique
   username String @unique
   password String
+  rank Int @default(1)
   user_info User_info @relation(fields: [user_infoId], references: [user_id], onDelete: Cascade)
   user_infoId Int @unique
 }
