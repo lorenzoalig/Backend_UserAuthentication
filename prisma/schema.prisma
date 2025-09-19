@@ -26,7 +26,6 @@ model User_info {
   age Int
   gender Gender
   birth_date DateTime
-  rank Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   // deletedAt DateTime @default(now()) // FIXME: Adicionar deletado
@@ -38,6 +37,7 @@ model User_credentials {
   email String @unique
   username String @unique
   password String
+  rank Int @default(1)
   user_info User_info @relation(fields: [user_infoId], references: [user_id], onDelete: Cascade)
   user_infoId Int @unique
 }

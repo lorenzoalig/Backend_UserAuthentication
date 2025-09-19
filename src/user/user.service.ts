@@ -36,7 +36,7 @@ export class UserService {
         prismaInput.user_credentials!.create!.password = password;
         return await this.databaseService.user_info.create({
             data: prismaInput,
-            include: { user_credentials: true}
+            include: { user_credentials: true }
         })
     }
 
@@ -70,7 +70,7 @@ export class UserService {
     async findUserByUsername(username: string) : Promise<User_credentials | null>{
         return await this.databaseService.user_credentials.findUnique({
             where: {
-                username,
+                username
             }
         });
     }

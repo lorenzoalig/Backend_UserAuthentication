@@ -24,6 +24,11 @@ export class CreateUserCredentialsDto {
         minSymbols: 1
     })
     password: string;
+
+    @IsInt()
+    @IsNotEmpty()
+    @Type(() => Number)
+    rank: number;
 }
 
 export class CreateUserCredentialsWrapperDto {
@@ -62,11 +67,6 @@ export class CreateUserDto {
     @IsNotEmpty()
     @Type(() => Date)
     birth_date: Date;
-
-    @IsInt()
-    @IsNotEmpty()
-    @Type(() => Number)
-    rank: number;
 
     @ValidateNested()
     @IsNotEmpty()

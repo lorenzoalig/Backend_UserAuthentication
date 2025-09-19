@@ -9,12 +9,12 @@ export function mapUserDtoToPrisma(dto: CreateUserDto) : Prisma.User_infoCreateI
         age: dto.age,
         gender: dto.gender,
         birth_date: dto.birth_date,
-        rank: dto.rank,
         user_credentials: {
             create: {
                 username: dto.user_credentials.create.username,
                 email: dto.user_credentials.create.email,
                 password: dto.user_credentials.create.password,
+                rank: dto.user_credentials.create.rank
             }
         }
     };
@@ -22,7 +22,7 @@ export function mapUserDtoToPrisma(dto: CreateUserDto) : Prisma.User_infoCreateI
 }
 
 export function mapUserEntityToUserResponseDto (
-    user: User_info & { user_credentials: { email: string; username: string; password: string; credentials_id: number; user_infoId: number } | null }
+    user: User_info & { user_credentials: { email: string; username: string; password: string; rank: number, credentials_id: number; user_infoId: number } | null }
 ) : UserResponseDto{
     if (!user.user_credentials) {
         throw new Error("User credentials not found");
@@ -34,6 +34,7 @@ export function mapUserEntityToUserResponseDto (
         age: user.age,
         gender: user.gender,
         birth_date: user.birth_date,
+        rank: user.user_credentials.rank,
         username: user.user_credentials.username,
         email: user.user_credentials.email
     };
