@@ -4,18 +4,22 @@ import PDFDocument from "pdfkit";
 import QRCode from "qrcode";
 import { UserService } from "./user.service";
 import { UserResponseDto } from "./dto/user-response.dto";
-import { mapUserDtoToPrisma, mapUserEntityToUserResponseDto } from "./mapper/user.mapper";
+import { MapperService } from "./mapper/user.mapper";
+
 
 @Injectable()
 export class PdfService {
-    constructor(private readonly userService : UserService) {}
+    constructor(
+        private readonly userService: UserService,
+        private readonly mapperService: MapperService
+    ) {}
     
     async createReport(@Req() req) : Promise<PDFDocument> {
         const userId = req.user.userId;
         const user = await this.userService.findUserById(userId);
         
         if(!user) throw new InternalServerErrorException("User not found")
-        const responseDto = mapUserEntityToUserResponseDto(user);
+        const responseDto = this.mapperService.mapUserEntityToUserResponseDto(user);
         return this.generatePdf(responseDto);
     }
     
