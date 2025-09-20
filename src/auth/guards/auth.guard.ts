@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
             };
             return true;
         } catch (error) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Access denied: validation failed');
         }
     }
 }

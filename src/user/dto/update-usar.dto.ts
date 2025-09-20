@@ -1,21 +1,21 @@
 import { Gender } from "@prisma/client";
 import { Type } from "class-transformer";
-import { IsDate, IsEmail, IsEnum, IsIn, IsInt, IsNotEmpty, IsString, IsStrongPassword, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
+import { IsDate, IsEmail, IsEnum, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, IsStrongPassword, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
 
 
-export class CreateUserCredentialsDto { 
+export class UpdateCredentialsDto {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @MinLength(5)
     @MaxLength(16)
     username: string;
     
     @IsEmail()
-    @IsNotEmpty()
+    @IsOptional()
     email: string;
-     
+        
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @IsStrongPassword({
         minLength: 8,
         minLowercase: 1,
@@ -26,50 +26,50 @@ export class CreateUserCredentialsDto {
     password: string;
 
     @IsInt()
-    @IsNotEmpty()
+    @IsOptional()
     @Type(() => Number)
     rank: number;
 }
 
-export class CreateUserCredentialsWrapperDto {
+export class UpdateCredentialsWrapperDto { 
     @ValidateNested()
-    @IsNotEmpty()
-    @Type(() => CreateUserCredentialsDto)
-    create: CreateUserCredentialsDto
+    @IsOptional()
+    @Type(() => UpdateCredentialsDto)
+    update: UpdateCredentialsDto
 }
 
-export class CreateUserDto {
+export class UpdateUserDto {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @MaxLength(15)
     @MinLength(3)
     first_name: string;
     
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @MaxLength(15)
     @MinLength(3)
     last_name: string;
 
     @IsInt()
-    @IsNotEmpty()
+    @IsOptional()
     @Max(140)
     @Min(0)
     @Type(() => Number)
     age: number;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @IsEnum(Gender)
     gender: Gender;
 
     @IsDate()
-    @IsNotEmpty()
+    @IsOptional()
     @Type(() => Date)
     birth_date: Date;
 
     @ValidateNested()
-    @IsNotEmpty()
-    @Type(() => CreateUserCredentialsWrapperDto)
-    credentials: CreateUserCredentialsWrapperDto;
+    @IsOptional()
+    @Type(() => UpdateCredentialsWrapperDto)
+    credentials: UpdateCredentialsWrapperDto;
 }
